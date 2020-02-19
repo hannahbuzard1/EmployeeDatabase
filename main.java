@@ -51,6 +51,8 @@ class main {
                   connection.setString(4, args[3]);
                   connection.setString(5, args[4]);
                   connection.setInt(6, args[5]);
+                  
+    System.out.println("Employee successfully added to database. Employee: " + args[0] + " " + args[1] );
     }
 
 
