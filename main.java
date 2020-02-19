@@ -4,7 +4,20 @@ import java.util.Scanner;
 
 class main {
     public static void main(String[] args) throws Exception {
-        //your code here
+        switch (args[0]) {
+            // cases here
+        }
     }
-    //other functions here
+
+    private static void show(String[] args) {
+
+    }
+
+    private static void add(String[] args) {
+
+    }
+
+    private static void delete(String[] args) {
+
+    }
 }
