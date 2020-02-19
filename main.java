@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 class main {
     public static void main(String[] args) throws Exception {
-        Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
+        //Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
         String[] parameters = args[0].split(" ");
         if(parameters[0] == "show") {
           show(parameters);
@@ -44,16 +44,17 @@ class main {
     }
 
     private static void add(String[] args) {
-      
-      PreparedStatement inserting = connect.prepareStatement("insert into employees values (null, null, null, null, null, null)");
+      Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
+      String commands = "INSERT INTO employees (first_name, last_name, dept_name, birthdate, gender, salary) VALUES(?, ?, ?, ?, ?, ?)";
+      PreparedStatement inserting = connect.prepareStatement(commands);
                   connect.setString(1, args[0]);
                   connect.setString(2, args[1]);
                   connect.setString(3, args[2]);
                   connect.setString(4, args[3]);
                   connect.setString(5, args[4]);
                   connect.setInt(6, args[5]);
-                  
-    System.out.println("Employee successfully added to database. Employee: " + args[0] + " " + args[1] );
+
+      System.out.println("Employee successfully added to database. Employee: " + args[0] + " " + args[1] );
     }
 
 
