@@ -6,7 +6,19 @@ import java.util.Scanner;
 
 class main {
     public static void main(String[] args) throws Exception {
-        show();
+        String[] parameters = args[0].split(" ");
+        if(parameters[0] == "show") {
+          show(parameters);
+        }
+        if(parameters[0]== "add") {
+          add(parameters);
+        }
+        if(parameters[0] == "delete") {
+          delete(parameters);
+        }
+        if(parameters[2]=="sum") {
+          sum(parameters);
+        }
     }
 
     private static void show() throws SQLException, FileNotFoundException {
@@ -31,10 +43,22 @@ class main {
     }
 
     private static void add(String[] args) {
-
+      
+      PreparedStatement inserting = conn.prepareStatement("insert into employees values (null, null, null, null, null, null)");
+                  connection.setString(1, args[0]);
+                  connection.setString(2, args[1]);
+                  connection.setString(3, args[2]);
+                  connection.setString(4, args[3]);
+                  connection.setString(5, args[4]);
+                  connection.setInt(6, args[5]);
     }
 
+
     private static void delete(String[] args) {
+
+    }
+    
+    private static void sum(String[] args) {
 
     }
 }
