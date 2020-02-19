@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 class main {
     public static void main(String[] args) throws Exception {
+        Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
         String[] parameters = args[0].split(" ");
         if(parameters[0] == "show") {
           show(parameters);
