@@ -46,12 +46,12 @@ class main {
     private static void add(String[] args) {
       
       PreparedStatement inserting = conn.prepareStatement("insert into employees values (null, null, null, null, null, null)");
-                  connection.setString(1, args[0]);
-                  connection.setString(2, args[1]);
-                  connection.setString(3, args[2]);
-                  connection.setString(4, args[3]);
-                  connection.setString(5, args[4]);
-                  connection.setInt(6, args[5]);
+                  connect.setString(1, args[0]);
+                  connect.setString(2, args[1]);
+                  connect.setString(3, args[2]);
+                  connect.setString(4, args[3]);
+                  connect.setString(5, args[4]);
+                  connect.setInt(6, args[5]);
                   
     System.out.println("Employee successfully added to database. Employee: " + args[0] + " " + args[1] );
     }
