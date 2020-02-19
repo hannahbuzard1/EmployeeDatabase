@@ -45,7 +45,7 @@ class main {
 
     private static void add(String[] args) {
       
-      PreparedStatement inserting = conn.prepareStatement("insert into employees values (null, null, null, null, null, null)");
+      PreparedStatement inserting = connect.prepareStatement("insert into employees values (null, null, null, null, null, null)");
                   connect.setString(1, args[0]);
                   connect.setString(2, args[1]);
                   connect.setString(3, args[2]);
