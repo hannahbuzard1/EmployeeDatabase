@@ -22,7 +22,7 @@ class main {
         }
     }
 
-    private static void show() throws SQLException, FileNotFoundException {
+    private static void show(String[] args) throws SQLException, FileNotFoundException {
         File credentialsFile = new File("credentials.txt");
         Scanner scan = new Scanner(new FileInputStream(credentialsFile));
         String url = scan.nextLine();
