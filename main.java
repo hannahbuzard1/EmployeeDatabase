@@ -6,44 +6,56 @@ import java.util.Scanner;
 
 class main {
     public static void main(String[] args) throws Exception {
-        //Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
-        String[] parameters = args[0].split(" ");
-        if(parameters[0] == "show") {
-          show(parameters);
+        if (args.length < 1) {
+            System.out.println("No arguments given!");
+            return;
         }
-        if(parameters[0]== "add") {
-          add(parameters);
-        }
-        if(parameters[0] == "delete") {
-          delete(parameters);
-        }
-        if(parameters[2]=="sum") {
-          sum(parameters);
+        switch (args[0]) {
+            case "show":
+                if (args[1].equals("sum")) {
+                    sum(args);
+                } else {
+                    show(args);
+                }
+                break;
+            case "add":
+                //add(args);
+                break;
+            case "delete":
+                delete(args);
+                break;
+            default:
+                System.out.println(args[0] + " is not supported!");
+                break;
         }
     }
 
-    private static void show(String[] args) throws SQLException, FileNotFoundException {
+    private static Statement getStatement() throws FileNotFoundException, SQLException {
         File credentialsFile = new File("credentials.txt");
         Scanner scan = new Scanner(new FileInputStream(credentialsFile));
         String url = scan.nextLine();
         Connection connection = DriverManager.getConnection(url);
-        Statement statement = connection.createStatement();
-        String testQuery = "select emp_no, first_name, last_name from employees where emp_no = 499999;";
-        ResultSet resultSet = statement.executeQuery(testQuery);
+        return connection.createStatement();
+    }
 
-        System.out.println("The records selected are:");
-        int rowCount = 0;
+    private static void show(String[] args) throws SQLException, FileNotFoundException {
+        String query = "select emp_no, first_name, last_name from employees natural join dept_emp natural join departments where dept_name = '";
+        query += args[3];
+        query += "'";
+
+        System.out.println("Executing: " + query);
+
+        ResultSet resultSet = getStatement().executeQuery(query);
+
         while (resultSet.next()) {
             int empNo = resultSet.getInt("emp_no");
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
-            System.out.println(empNo + ", " + firstName + ", " + lastName);
-            ++rowCount;
+            System.out.println(empNo + " " + firstName + " " + lastName);
         }
-        System.out.println("Total number of records = " + rowCount);
     }
 
-    private static void add(String[] args) {
+    /*private static void add(String[] args) {
       Connection connect = DriverManager.getConnection("jdbc:mysql:3306/buzardh", "buzardh", "*u/aE7YzNf8/");
       String commands = "INSERT INTO employees (first_name, last_name, dept_name, birthdate, gender, salary) VALUES(?, ?, ?, ?, ?, ?)";
       PreparedStatement inserting = connect.prepareStatement(commands);
@@ -55,7 +67,7 @@ class main {
                   connect.setInt(6, args[5]);
 
       System.out.println("Employee successfully added to database. Employee: " + args[0] + " " + args[1] );
-    }
+    }*/
 
 
     private static void delete(String[] args) {
