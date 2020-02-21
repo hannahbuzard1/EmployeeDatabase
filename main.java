@@ -52,6 +52,7 @@ class main {
             final String lastName = resultSet.getString("last_name");
             System.out.println(empNo + " " + firstName + " " + lastName);
         }
+        resultSet.close();
     }
 
     private static void add(final String[] args) throws FileNotFoundException, SQLException {
@@ -66,8 +67,9 @@ class main {
         final ResultSet empNoSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
         empNoSet.next();
         final int empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
+        empNoSet.close();
         // Find correct dept_no
-        final String deptName;
+        String deptName;
         if (args.length == 8) {
             deptName = args[4];
         } else {
@@ -76,6 +78,7 @@ class main {
         final ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
         deptNoSet.next();
         final String dept_no = deptNoSet.getString("dept_no");
+        deptNoSet.close();
 
         // Begin with employees table
         String command = "INSERT INTO employees (emp_no, birth_date, first_name, last_name, gender, hire_date) VALUES(?, ?, ?, ?, ?, CURDATE())";
@@ -94,6 +97,7 @@ class main {
             statement.setString(5, args[7]);
         }
         statement.execute();
+        statement.close();
 
         // Now the dept_emp table
         command = "INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')";
@@ -101,6 +105,7 @@ class main {
         statement.setInt(1, empNo);
         statement.setString(2, dept_no);
         statement.execute();
+        statement.close();
 
         // Finally, the salaries table
         command = "INSERT INTO salaries (emp_no, salary, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')";
@@ -112,6 +117,7 @@ class main {
             statement.setInt(2, Integer.parseInt(args[8]));
         }
         statement.execute();
+        statement.close();
 
         System.out.println("Employee: " + args[2] + " " + args[3] + " added!");
     }
@@ -134,6 +140,7 @@ class main {
             System.out.println("Employee with id " + args[2] + " does not exist.");
             return;
         }
+        empNoSet.close();
 
         // Get first name and last name for response
         final String query = "SELECT first_name, last_name FROM employees WHERE emp_no = " + args[2];
@@ -141,6 +148,7 @@ class main {
         name.next();
         final String firstName = name.getString("first_name");
         final String lastName = name.getString("last_name");
+        name.close();
 
         // Delete from employees table
         String command = "DELETE FROM employees where emp_no = " + args[2];
@@ -167,5 +175,6 @@ class main {
         final ResultSet salarySumSet = getConnection().createStatement().executeQuery("SELECT SUM(salary) FROM salaries WHERE YEAR(to_date) > YEAR(CURDATE())");
         salarySumSet.next();
         System.out.println("$" + Long.parseLong(salarySumSet.getString("SUM(salary)")));
+        salarySumSet.close();
     }
 }
