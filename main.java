@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.Scanner;
 
 class main {
-    public static void main(String[] args) throws FileNotFoundException, SQLException {
+    public static void main(final String[] args) throws FileNotFoundException, SQLException {
         if (args.length < 1) {
             System.out.println("No arguments given!");
             return;
@@ -31,51 +31,51 @@ class main {
     }
 
     private static Connection getConnection() throws FileNotFoundException, SQLException {
-        File credentialsFile = new File("credentials.txt");
-        Scanner scan = new Scanner(new FileInputStream(credentialsFile));
-        String url = scan.nextLine();
+        final File credentialsFile = new File("credentials.txt");
+        final Scanner scan = new Scanner(new FileInputStream(credentialsFile));
+        final String url = scan.nextLine();
         return DriverManager.getConnection(url);
     }
 
-    private static void show(String[] args) throws SQLException, FileNotFoundException {
-        StringBuilder query = new StringBuilder("SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = '");
+    private static void show(final String[] args) throws SQLException, FileNotFoundException {
+        final StringBuilder query = new StringBuilder("SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = '");
         for (int i = 3; i < args.length; i++) {
             query.append(args[i]).append(" ");
         }
         query.append("'");
 
-        ResultSet resultSet = getConnection().createStatement().executeQuery(query.toString());
+        final ResultSet resultSet = getConnection().createStatement().executeQuery(query.toString());
 
         while (resultSet.next()) {
-            int empNo = resultSet.getInt("emp_no");
-            String firstName = resultSet.getString("first_name");
-            String lastName = resultSet.getString("last_name");
+            final int empNo = resultSet.getInt("emp_no");
+            final String firstName = resultSet.getString("first_name");
+            final String lastName = resultSet.getString("last_name");
             System.out.println(empNo + " " + firstName + " " + lastName);
         }
     }
 
-    private static void add(String[] args) throws FileNotFoundException, SQLException {
+    private static void add(final String[] args) throws FileNotFoundException, SQLException {
         // Check for valid input size
         if (args.length < 8) {
             System.out.println("Not enough arguments for add!");
             return;
         }
 
-        Connection connection = getConnection();
+        final Connection connection = getConnection();
         // Find new emp_no
-        ResultSet empNoSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
+        final ResultSet empNoSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
         empNoSet.next();
-        int empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
+        final int empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
         // Find correct dept_no
-        String deptName;
+        final String deptName;
         if (args.length == 8) {
             deptName = args[4];
         } else {
             deptName = args[4] + " " + args[5];
         }
-        ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
+        final ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
         deptNoSet.next();
-        String dept_no = deptNoSet.getString("dept_no");
+        final String dept_no = deptNoSet.getString("dept_no");
 
         // Begin with employees table
         String command = "INSERT INTO employees (emp_no, birth_date, first_name, last_name, gender, hire_date) VALUES(?, ?, ?, ?, ?, CURDATE())";
@@ -117,7 +117,7 @@ class main {
     }
 
 
-    private static void delete(String[] args) throws FileNotFoundException, SQLException {
+    private static void delete(final String[] args) throws FileNotFoundException, SQLException {
         // Check for valid input size
         if (args.length < 3) {
             System.out.println("Not enough arguments for delete!");
@@ -125,7 +125,7 @@ class main {
         }
 
         // Check if emp_no exists
-        ResultSet empNoSet = getConnection().createStatement().executeQuery("SELECT * FROM employees where emp_no = " + args[2]);
+        final ResultSet empNoSet = getConnection().createStatement().executeQuery("SELECT * FROM employees where emp_no = " + args[2]);
         boolean exists = false;
         while (empNoSet.next()) {
             exists = true;
@@ -136,11 +136,11 @@ class main {
         }
 
         // Get first name and last name for response
-        String query = "SELECT first_name, last_name FROM employees WHERE emp_no = " + args[2];
-        ResultSet name = getConnection().createStatement().executeQuery(query);
+        final String query = "SELECT first_name, last_name FROM employees WHERE emp_no = " + args[2];
+        final ResultSet name = getConnection().createStatement().executeQuery(query);
         name.next();
-        String firstName = name.getString("first_name");
-        String lastName = name.getString("last_name");
+        final String firstName = name.getString("first_name");
+        final String lastName = name.getString("last_name");
 
         // Delete from employees table
         String command = "DELETE FROM employees where emp_no = " + args[2];
@@ -157,14 +157,14 @@ class main {
         System.out.println("Employee " + firstName + " " + lastName + " deleted!");
     }
 
-    private static void sum(String[] args) throws FileNotFoundException, SQLException {
+    private static void sum(final String[] args) throws FileNotFoundException, SQLException {
         // Check for valid input size
         if (args.length < 3) {
             System.out.println("Not enough arguments for add!");
             return;
         }
 
-        ResultSet salarySumSet = getConnection().createStatement().executeQuery("SELECT SUM(salary) FROM salaries WHERE YEAR(to_date) > YEAR(CURDATE())");
+        final ResultSet salarySumSet = getConnection().createStatement().executeQuery("SELECT SUM(salary) FROM salaries WHERE YEAR(to_date) > YEAR(CURDATE())");
         salarySumSet.next();
         System.out.println("$" + Long.parseLong(salarySumSet.getString("SUM(salary)")));
     }
