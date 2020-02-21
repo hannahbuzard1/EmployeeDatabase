@@ -71,8 +71,10 @@ class main {
         final Connection connection = getConnection();
         // Find new emp_no
         final ResultSet empNoSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
-        empNoSet.next();
-        final int empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
+        int empNo = -1;
+        if (empNoSet.next()) {
+            empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
+        }
         empNoSet.close();
         // Find correct dept_no
         String deptName;
@@ -82,8 +84,10 @@ class main {
             deptName = args[4] + " " + args[5];
         }
         final ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
-        deptNoSet.next();
-        final String deptNo = deptNoSet.getString("dept_no");
+        String deptNo = "";
+        if (deptNoSet.next()) {
+            deptNo= deptNoSet.getString("dept_no");
+        }
         deptNoSet.close();
 
         // Begin with employees table
@@ -124,6 +128,7 @@ class main {
         }
         statement.execute();
         statement.close();
+        connection.close();
 
         System.out.println("Employee: " + args[2] + " " + args[3] + " added!");
     }
@@ -161,9 +166,11 @@ class main {
         preparedStatement = getConnection().prepareStatement(query);
         preparedStatement.setInt(1, Integer.parseInt(args[2]));
         final ResultSet name = preparedStatement.executeQuery();
-        name.next();
-        final String firstName = name.getString("first_name");
-        final String lastName = name.getString("last_name");
+        String firstName = "", lastName = "";
+        if (name.next()) {
+            firstName = name.getString("first_name");
+            lastName = name.getString("last_name");
+        }
         name.close();
 
         // Delete from employees table
@@ -195,8 +202,9 @@ class main {
         }
 
         final ResultSet salarySumSet = getConnection().createStatement().executeQuery("SELECT SUM(salary) FROM salaries WHERE YEAR(to_date) > YEAR(CURDATE())");
-        salarySumSet.next();
-        System.out.println("$" + Long.parseLong(salarySumSet.getString("SUM(salary)")));
+        if (salarySumSet.next()) {
+            System.out.println("$" + Long.parseLong(salarySumSet.getString("SUM(salary)")));
+        }
         salarySumSet.close();
     }
 }
