@@ -38,13 +38,16 @@ class main {
     }
 
     private static void show(final String[] args) throws SQLException, FileNotFoundException {
-        final StringBuilder query = new StringBuilder("SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = '");
-        for (int i = 3; i < args.length; i++) {
-            query.append(args[i]).append(" ");
+        final String query = "SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = ?";
+        final PreparedStatement preparedStatement = getConnection().prepareStatement(query);
+        String deptName;
+        if (args.length == 4) {
+            deptName = args[3];
+        } else {
+            deptName = args[3] + " " + args[4];
         }
-        query.append("'");
-
-        final ResultSet resultSet = getConnection().createStatement().executeQuery(query.toString());
+        preparedStatement.setString(1, deptName);
+        final ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
             final int empNo = resultSet.getInt("emp_no");
@@ -131,7 +134,10 @@ class main {
         }
 
         // Check if emp_no exists
-        final ResultSet empNoSet = getConnection().createStatement().executeQuery("SELECT * FROM employees where emp_no = " + args[2]);
+        String query = "SELECT * FROM employees where emp_no = ?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(query);
+        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        final ResultSet empNoSet = preparedStatement.executeQuery();
         boolean exists = false;
         while (empNoSet.next()) {
             exists = true;
@@ -143,24 +149,32 @@ class main {
         empNoSet.close();
 
         // Get first name and last name for response
-        final String query = "SELECT first_name, last_name FROM employees WHERE emp_no = " + args[2];
-        final ResultSet name = getConnection().createStatement().executeQuery(query);
+        query = "SELECT first_name, last_name FROM employees WHERE emp_no = ?";
+        preparedStatement = getConnection().prepareStatement(query);
+        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        final ResultSet name = preparedStatement.executeQuery();
         name.next();
         final String firstName = name.getString("first_name");
         final String lastName = name.getString("last_name");
         name.close();
 
         // Delete from employees table
-        String command = "DELETE FROM employees where emp_no = " + args[2];
-        getConnection().createStatement().execute(command);
+        String command = "DELETE FROM employees where emp_no = ?";
+        preparedStatement = getConnection().prepareStatement(command);
+        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        preparedStatement.execute();
 
         // Delete from dept_emp table
-        command = "DELETE FROM dept_emp where emp_no = " + args[2];
-        getConnection().createStatement().execute(command);
+        command = "DELETE FROM dept_emp where emp_no = ?";
+        preparedStatement = getConnection().prepareStatement(command);
+        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        preparedStatement.execute();
 
         // Delete from salaries table
-        command = "DELETE FROM salaries where emp_no = " + args[2];
-        getConnection().createStatement().execute(command);
+        command = "DELETE FROM salaries where emp_no = ?";
+        preparedStatement = getConnection().prepareStatement(command);
+        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        preparedStatement.execute();
 
         System.out.println("Employee " + firstName + " " + lastName + " deleted!");
     }
