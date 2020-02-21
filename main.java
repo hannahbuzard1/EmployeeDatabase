@@ -5,6 +5,9 @@ import java.sql.*;
 import java.util.Scanner;
 
 class main {
+    private main() {
+    }
+
     public static void main(final String[] args) throws FileNotFoundException, SQLException {
         if (args.length < 1) {
             System.out.println("No arguments given!");
@@ -38,7 +41,7 @@ class main {
     }
 
     private static void show(final String[] args) throws SQLException, FileNotFoundException {
-        final String query = "SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = ?";
+        String query = "SELECT emp_no, first_name, last_name FROM employees NATURAL JOIN dept_emp NATURAL JOIN departments WHERE dept_name = ?";
         final PreparedStatement preparedStatement = getConnection().prepareStatement(query);
         String deptName;
         if (args.length == 4) {
@@ -80,7 +83,7 @@ class main {
         }
         final ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
         deptNoSet.next();
-        final String dept_no = deptNoSet.getString("dept_no");
+        final String deptNo = deptNoSet.getString("dept_no");
         deptNoSet.close();
 
         // Begin with employees table
@@ -106,7 +109,7 @@ class main {
         command = "INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')";
         statement = connection.prepareStatement(command);
         statement.setInt(1, empNo);
-        statement.setString(2, dept_no);
+        statement.setString(2, deptNo);
         statement.execute();
         statement.close();
 
