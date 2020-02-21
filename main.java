@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.Scanner;
 
-class main {
+final class main {
     private main() {
     }
 
@@ -166,7 +166,8 @@ class main {
         preparedStatement = getConnection().prepareStatement(query);
         preparedStatement.setInt(1, Integer.parseInt(args[2]));
         final ResultSet name = preparedStatement.executeQuery();
-        String firstName = "", lastName = "";
+        String firstName = "";
+        String lastName = "";
         if (name.next()) {
             firstName = name.getString("first_name");
             lastName = name.getString("last_name");
