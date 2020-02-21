@@ -63,24 +63,24 @@ class main {
 
         Connection connection = getConnection();
         // Find new emp_no
-        ResultSet emp_noSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
-        emp_noSet.next();
-        int emp_no = Integer.parseInt(emp_noSet.getString("MAX(emp_no)")) + 1;
+        ResultSet empNoSet = connection.createStatement().executeQuery("SELECT MAX(emp_no) FROM employees");
+        empNoSet.next();
+        int empNo = Integer.parseInt(empNoSet.getString("MAX(emp_no)")) + 1;
         // Find correct dept_no
-        String dept_name;
+        String deptName;
         if (args.length == 8) {
-            dept_name = args[4];
+            deptName = args[4];
         } else {
-            dept_name = args[4] + " " + args[5];
+            deptName = args[4] + " " + args[5];
         }
-        ResultSet dept_noSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + dept_name + "'");
-        dept_noSet.next();
-        String dept_no = dept_noSet.getString("dept_no");
+        ResultSet deptNoSet = connection.createStatement().executeQuery("SELECT dept_no FROM departments WHERE dept_name = '" + deptName + "'");
+        deptNoSet.next();
+        String dept_no = deptNoSet.getString("dept_no");
 
         // Begin with employees table
         String command = "INSERT INTO employees (emp_no, birth_date, first_name, last_name, gender, hire_date) VALUES(?, ?, ?, ?, ?, CURDATE())";
         PreparedStatement statement = connection.prepareStatement(command);
-        statement.setInt(1, emp_no);
+        statement.setInt(1, empNo);
         if (args.length == 8) {
             statement.setString(2, args[5]);
         } else {
@@ -98,14 +98,14 @@ class main {
         // Now the dept_emp table
         command = "INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')";
         statement = connection.prepareStatement(command);
-        statement.setInt(1, emp_no);
+        statement.setInt(1, empNo);
         statement.setString(2, dept_no);
         statement.execute();
 
         // Finally, the salaries table
         command = "INSERT INTO salaries (emp_no, salary, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')";
         statement = connection.prepareStatement(command);
-        statement.setInt(1, emp_no);
+        statement.setInt(1, empNo);
         if (args.length == 8) {
             statement.setInt(2, Integer.parseInt(args[7]));
         } else {
@@ -125,9 +125,9 @@ class main {
         }
 
         // Check if emp_no exists
-        ResultSet emp_noSet = getConnection().createStatement().executeQuery("SELECT * FROM employees where emp_no = " + args[2]);
+        ResultSet empNoSet = getConnection().createStatement().executeQuery("SELECT * FROM employees where emp_no = " + args[2]);
         boolean exists = false;
-        while (emp_noSet.next()) {
+        while (empNoSet.next()) {
             exists = true;
         }
         if (!exists) {
@@ -139,8 +139,8 @@ class main {
         String query = "SELECT first_name, last_name FROM employees WHERE emp_no = " + args[2];
         ResultSet name = getConnection().createStatement().executeQuery(query);
         name.next();
-        String first_name = name.getString("first_name");
-        String last_name = name.getString("last_name");
+        String firstName = name.getString("first_name");
+        String lastName = name.getString("last_name");
 
         // Delete from employees table
         String command = "DELETE FROM employees where emp_no = " + args[2];
@@ -154,7 +154,7 @@ class main {
         command = "DELETE FROM salaries where emp_no = " + args[2];
         getConnection().createStatement().execute(command);
 
-        System.out.println("Employee " + first_name + " " + last_name + " deleted!");
+        System.out.println("Employee " + firstName + " " + lastName + " deleted!");
     }
 
     private static void sum(String[] args) throws FileNotFoundException, SQLException {
