@@ -12,7 +12,7 @@ class main {
         }
         switch (args[0]) {
             case "show":
-                if (args[1].equals("sum")) {
+                if (args[2].equals("sum")) {
                     sum(args);
                 } else {
                     show(args);
@@ -136,7 +136,12 @@ class main {
         // Check if emp_no exists
         String query = "SELECT * FROM employees where emp_no = ?";
         PreparedStatement preparedStatement = getConnection().prepareStatement(query);
-        preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        try {
+            preparedStatement.setInt(1, Integer.parseInt(args[2]));
+        } catch (NumberFormatException e) {
+            System.out.println("Employee with id " + args[2] + " does not exist.");
+            return;
+        }
         final ResultSet empNoSet = preparedStatement.executeQuery();
         boolean exists = false;
         while (empNoSet.next()) {
