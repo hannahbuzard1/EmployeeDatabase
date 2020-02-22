@@ -44,13 +44,13 @@ public final class main {
             sumSet.close();
 
             // Attempt to initialize nextEmployeeNumber
-            final ResultSet nextEmployeeNumberSet = connection.createStatement().executeQuery(
+            final ResultSet nextEmpNumSet = connection.createStatement().executeQuery(
                     "SELECT MAX(emp_no) FROM employees");
-            if (nextEmployeeNumberSet.next()) {
-                nextEmpNum = Integer.parseInt(nextEmployeeNumberSet.getString("MAX"
+            if (nextEmpNumSet.next()) {
+                nextEmpNum = Integer.parseInt(nextEmpNumSet.getString("MAX"
                         + "(emp_no)")) + 1;
             }
-            nextEmployeeNumberSet.close();
+            nextEmpNumSet.close();
 
             // Attempt to initialize departmentNumberStatement
             depNumStatement = connection.prepareStatement("SELECT dept_no FROM "
@@ -207,11 +207,11 @@ public final class main {
             try {
                 // Attempt to execute query and store it
                 depNumStatement.setString(1, departmentName);
-                final ResultSet departmentNumberSet = depNumStatement.executeQuery();
+                final ResultSet depNumSet = depNumStatement.executeQuery();
 
                 // If a row exists in departmentNumberSet, assign its value to departmentNumber
-                if (departmentNumberSet.next()) {
-                    final String departmentNumber = departmentNumberSet.getString("dept_no");
+                if (depNumSet.next()) {
+                    final String departmentNumber = depNumSet.getString("dept_no");
 
                     // Attempt to insert into employees table
                     addEmpStatement.setInt(1, nextEmpNum);
@@ -250,7 +250,7 @@ public final class main {
                 }
 
                 // Attempt to close departmentNumberSet
-                departmentNumberSet.close();
+                depNumSet.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -274,8 +274,8 @@ public final class main {
 
                     // If a row exists in firstLastNameSet, then proceed
                     if (firstLastNameSet.next()) {
-                        String firstName = firstLastNameSet.getString("first_name");
-                        String lastName = firstLastNameSet.getString("last_name");
+                        final String firstName = firstLastNameSet.getString("first_name");
+                        final String lastName = firstLastNameSet.getString("last_name");
 
                         // Attempt to delete from employees table
                         delEmpStatement.setInt(1, Integer.parseInt(args[2]));
