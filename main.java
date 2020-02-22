@@ -11,16 +11,19 @@ import java.util.Scanner;
 public final class main {
 
     private static Connection connection = null;
-    private static String departmentName;
+    private static String departmentName = null;
     private static ResultSet showSet = null;
     private static PreparedStatement showStatement = null;
     private static long sum = -1;
     private static int nextEmpNum = -1;
+    private static ResultSet depNumSet = null;
     private static PreparedStatement depNumStatement = null;
     private static PreparedStatement addEmpStatement = null;
     private static PreparedStatement addDepStatement = null;
     private static PreparedStatement addSalStatement = null;
+    private static ResultSet employeeNumberSet = null;
     private static PreparedStatement empNumStatement = null;
+    private static ResultSet firstLastNameSet = null;
     private static PreparedStatement nameStatement = null;
     private static PreparedStatement delEmpStatement = null;
     private static PreparedStatement delDepStatement = null;
@@ -130,6 +133,8 @@ public final class main {
             showSet.close();
             // Attempt to close showStatement
             showStatement.close();
+            // Attempt to close departmentNumberSet
+            depNumSet.close();
             // Attempt to close departmentNumberStatement
             depNumStatement.close();
             // Attempt to close addEmployeesTableStatement
@@ -138,8 +143,12 @@ public final class main {
             addDepStatement.close();
             // Attempt to close addSalariesTableStatement
             addSalStatement.close();
+            // Attempt to close employeeNumberSet
+            employeeNumberSet.close();
             // Attempt to close employeeNumberStatement
             empNumStatement.close();
+            // Attempt to close firstLastNameSet
+            firstLastNameSet.close();
             // Attempt to close firstLastNameStatement
             nameStatement.close();
             // Attempt to close deleteEmployeesTableStatement
@@ -208,7 +217,7 @@ public final class main {
             try {
                 // Attempt to execute query and store it
                 depNumStatement.setString(1, departmentName);
-                final ResultSet depNumSet = depNumStatement.executeQuery();
+                depNumSet = depNumStatement.executeQuery();
 
                 // If a row exists in departmentNumberSet, assign its value to departmentNumber
                 if (depNumSet.next()) {
@@ -249,9 +258,6 @@ public final class main {
                 } else {
                     System.out.println("Department " + departmentName + " doesn't exist.");
                 }
-
-                // Attempt to close departmentNumberSet
-                depNumSet.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -265,13 +271,13 @@ public final class main {
             try {
                 // Attempt to execute query and store it
                 empNumStatement.setInt(1, Integer.parseInt(args[2]));
-                final ResultSet employeeNumberSet = empNumStatement.executeQuery();
+                employeeNumberSet = empNumStatement.executeQuery();
 
                 // If a row exists in employeeNumberSet, then proceed
                 if (employeeNumberSet.next()) {
                     // Attempt to execute query and store it
                     nameStatement.setInt(1, Integer.parseInt(args[2]));
-                    final ResultSet firstLastNameSet = nameStatement.executeQuery();
+                    firstLastNameSet = nameStatement.executeQuery();
 
                     // If a row exists in firstLastNameSet, then proceed
                     if (firstLastNameSet.next()) {
@@ -294,15 +300,9 @@ public final class main {
                         // Print success message
                         System.out.println("Employee " + firstName + " " + lastName + " deleted!");
                     }
-
-                    // Attempt to close firstLastNameSet
-                    firstLastNameSet.close();
                 } else {
                     throw new NumberFormatException();
                 }
-
-                // Attempt to close employeeNumberSet
-                employeeNumberSet.close();
             } catch (NumberFormatException e) {
                 System.out.println("Employee with id " + args[2] + " does not exist.");
             } catch (SQLException e) {
