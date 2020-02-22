@@ -8,21 +8,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class main {
+public final class main {
 
     private static Connection connection = null;
     private static PreparedStatement showStatement = null;
     private static long sum = -1;
-    private static int nextEmployeeNumber = -1;
-    private static PreparedStatement departmentNumberStatement = null;
-    private static PreparedStatement addEmployeesTableStatement = null;
-    private static PreparedStatement addDepartmentEmployeesTableStatement = null;
-    private static PreparedStatement addSalariesTableStatement = null;
-    private static PreparedStatement employeeNumberStatement = null;
-    private static PreparedStatement firstLastNameStatement = null;
-    private static PreparedStatement deleteEmployeesTableStatement = null;
-    private static PreparedStatement deleteDepartmentEmployeesTableStatement = null;
-    private static PreparedStatement deleteSalariesTableStatement = null;
+    private static int nextEmpNum = -1;
+    private static PreparedStatement depNumStatement = null;
+    private static PreparedStatement addEmpStatement = null;
+    private static PreparedStatement addDepStatement = null;
+    private static PreparedStatement addSalStatement = null;
+    private static PreparedStatement empNumStatement = null;
+    private static PreparedStatement nameStatement = null;
+    private static PreparedStatement delEmpStatement = null;
+    private static PreparedStatement delDepStatement = null;
+    private static PreparedStatement delSalStatement = null;
 
     static {
         try {
@@ -47,47 +47,47 @@ public class main {
             final ResultSet nextEmployeeNumberSet = connection.createStatement().executeQuery(
                     "SELECT MAX(emp_no) FROM employees");
             if (nextEmployeeNumberSet.next()) {
-                nextEmployeeNumber = Integer.parseInt(nextEmployeeNumberSet.getString("MAX"
+                nextEmpNum = Integer.parseInt(nextEmployeeNumberSet.getString("MAX"
                         + "(emp_no)")) + 1;
             }
             nextEmployeeNumberSet.close();
 
             // Attempt to initialize departmentNumberStatement
-            departmentNumberStatement = connection.prepareStatement("SELECT dept_no FROM "
+            depNumStatement = connection.prepareStatement("SELECT dept_no FROM "
                     + "departments WHERE dept_name = ?");
 
             // Attempt to initialize addEmployeesTableStatement
-            addEmployeesTableStatement = connection.prepareStatement("INSERT INTO employees (emp_no,"
+            addEmpStatement = connection.prepareStatement("INSERT INTO employees (emp_no,"
                     + " birth_date, first_name, last_name, gender, hire_date) VALUES(?, ?, ?, ?, "
                     + "?, CURDATE())");
 
             // Attempt to initialize addDepartmentEmployeesTableStatement
-            addDepartmentEmployeesTableStatement = connection.prepareStatement("INSERT INTO dept_emp"
+            addDepStatement = connection.prepareStatement("INSERT INTO dept_emp"
                     + " (emp_no, dept_no, from_date, to_date) VALUES(?, ?, CURDATE(), "
                     + "'9999-01-01')");
 
             // Attempt to initialize addSalariesTableStatement
-            addSalariesTableStatement = connection.prepareStatement("INSERT INTO salaries (emp_no, "
+            addSalStatement = connection.prepareStatement("INSERT INTO salaries (emp_no, "
                     + "salary, from_date, to_date) VALUES(?, ?, CURDATE(), '9999-01-01')");
 
             // Attempt to initialize employeeNumberStatement
-            employeeNumberStatement = connection.prepareStatement("SELECT * FROM employees "
+            empNumStatement = connection.prepareStatement("SELECT * FROM employees "
                     + "where emp_no = ?");
 
             // Attempt to initialize firstLastNameStatement
-            firstLastNameStatement = connection.prepareStatement("SELECT first_name, last_name"
+            nameStatement = connection.prepareStatement("SELECT first_name, last_name"
                     + " FROM employees WHERE emp_no = ?");
 
             // Attempt to initialize deleteEmployeesTableStatement
-            deleteEmployeesTableStatement = connection.prepareStatement("DELETE FROM employees where "
+            delEmpStatement = connection.prepareStatement("DELETE FROM employees where "
                     + "emp_no = ?");
 
             // Attempt to initialize deleteDepartmentEmployeesTableStatement
-            deleteDepartmentEmployeesTableStatement = connection.prepareStatement("DELETE FROM dept_emp where "
+            delDepStatement = connection.prepareStatement("DELETE FROM dept_emp where "
                     + "emp_no = ?");
 
             // Attempt to initialize deleteSalariesTableStatement
-            deleteSalariesTableStatement = connection.prepareStatement("DELETE FROM salaries where "
+            delSalStatement = connection.prepareStatement("DELETE FROM salaries where "
                     + "emp_no = ?");
         } catch (SQLException | FileNotFoundException e) {
             e.printStackTrace();
@@ -127,23 +127,23 @@ public class main {
             // Attempt to close showStatement
             showStatement.close();
             // Attempt to close departmentNumberStatement
-            departmentNumberStatement.close();
+            depNumStatement.close();
             // Attempt to close addEmployeesTableStatement
-            addEmployeesTableStatement.close();
+            addEmpStatement.close();
             // Attempt to close addDepartmentEmployeesTableStatement
-            addDepartmentEmployeesTableStatement.close();
+            addDepStatement.close();
             // Attempt to close addSalariesTableStatement
-            addSalariesTableStatement.close();
+            addSalStatement.close();
             // Attempt to close employeeNumberStatement
-            employeeNumberStatement.close();
+            empNumStatement.close();
             // Attempt to close firstLastNameStatement
-            firstLastNameStatement.close();
+            nameStatement.close();
             // Attempt to close deleteEmployeesTableStatement
-            deleteEmployeesTableStatement.close();
+            delEmpStatement.close();
             // Attempt to close deleteDepartmentEmployeesTableStatement
-            deleteDepartmentEmployeesTableStatement.close();
+            delDepStatement.close();
             // Attempt to close deleteSalariesTableStatement
-            deleteSalariesTableStatement.close();
+            delSalStatement.close();
             // Attempt to close connection
             connection.close();
         } catch (SQLException e) {
@@ -152,7 +152,7 @@ public class main {
         }
     }
 
-    private static void show(String[] args) {
+    private static void show(final String[] args) {
         if (args.length > 3) {
             // Declare and initialize departmentName based on input size
             final String departmentName;
@@ -186,7 +186,7 @@ public class main {
         }
     }
 
-    private static void sum(String[] args) {
+    private static void sum(final String[] args) {
         if (args.length > 2) {
             System.out.println("$" + sum);
         } else {
@@ -194,7 +194,7 @@ public class main {
         }
     }
 
-    private static void add(String[] args) {
+    private static void add(final String[] args) {
         if (args.length > 7) {
             // Declare and initialize departmentName based on input size
             String departmentName;
@@ -206,42 +206,42 @@ public class main {
 
             try {
                 // Attempt to execute query and store it
-                departmentNumberStatement.setString(1, departmentName);
-                final ResultSet departmentNumberSet = departmentNumberStatement.executeQuery();
+                depNumStatement.setString(1, departmentName);
+                final ResultSet departmentNumberSet = depNumStatement.executeQuery();
 
                 // If a row exists in departmentNumberSet, assign its value to departmentNumber
                 if (departmentNumberSet.next()) {
                     final String departmentNumber = departmentNumberSet.getString("dept_no");
 
                     // Attempt to insert into employees table
-                    addEmployeesTableStatement.setInt(1, nextEmployeeNumber);
+                    addEmpStatement.setInt(1, nextEmpNum);
                     if (args.length == 8) {
-                        addEmployeesTableStatement.setString(2, args[5]);
+                        addEmpStatement.setString(2, args[5]);
                     } else {
-                        addEmployeesTableStatement.setString(2, args[6]);
+                        addEmpStatement.setString(2, args[6]);
                     }
-                    addEmployeesTableStatement.setString(3, args[2]);
-                    addEmployeesTableStatement.setString(4, args[3]);
+                    addEmpStatement.setString(3, args[2]);
+                    addEmpStatement.setString(4, args[3]);
                     if (args.length == 8) {
-                        addEmployeesTableStatement.setString(5, args[6]);
+                        addEmpStatement.setString(5, args[6]);
                     } else {
-                        addEmployeesTableStatement.setString(5, args[7]);
+                        addEmpStatement.setString(5, args[7]);
                     }
-                    addEmployeesTableStatement.execute();
+                    addEmpStatement.execute();
 
                     // Attempt to insert into dept_emp table
-                    addDepartmentEmployeesTableStatement.setInt(1, nextEmployeeNumber);
-                    addDepartmentEmployeesTableStatement.setString(2, departmentNumber);
-                    addDepartmentEmployeesTableStatement.execute();
+                    addDepStatement.setInt(1, nextEmpNum);
+                    addDepStatement.setString(2, departmentNumber);
+                    addDepStatement.execute();
 
                     // Attempt to insert into salaries table
-                    addSalariesTableStatement.setInt(1, nextEmployeeNumber);
+                    addSalStatement.setInt(1, nextEmpNum);
                     if (args.length == 8) {
-                        addSalariesTableStatement.setInt(2, Integer.parseInt(args[7]));
+                        addSalStatement.setInt(2, Integer.parseInt(args[7]));
                     } else {
-                        addSalariesTableStatement.setInt(2, Integer.parseInt(args[8]));
+                        addSalStatement.setInt(2, Integer.parseInt(args[8]));
                     }
-                    addSalariesTableStatement.execute();
+                    addSalStatement.execute();
 
                     // Print success message
                     System.out.println("Employee: " + args[2] + " " + args[3] + " added!");
@@ -259,18 +259,18 @@ public class main {
         }
     }
 
-    private static void delete(String[] args) {
+    private static void delete(final String[] args) {
         if (args.length > 2) {
             try {
                 // Attempt to execute query and store it
-                employeeNumberStatement.setInt(1, Integer.parseInt(args[2]));
-                final ResultSet employeeNumberSet = employeeNumberStatement.executeQuery();
+                empNumStatement.setInt(1, Integer.parseInt(args[2]));
+                final ResultSet employeeNumberSet = empNumStatement.executeQuery();
 
                 // If a row exists in employeeNumberSet, then proceed
                 if (employeeNumberSet.next()) {
                     // Attempt to execute query and store it
-                    firstLastNameStatement.setInt(1, Integer.parseInt(args[2]));
-                    final ResultSet firstLastNameSet = firstLastNameStatement.executeQuery();
+                    nameStatement.setInt(1, Integer.parseInt(args[2]));
+                    final ResultSet firstLastNameSet = nameStatement.executeQuery();
 
                     // If a row exists in firstLastNameSet, then proceed
                     if (firstLastNameSet.next()) {
@@ -278,17 +278,17 @@ public class main {
                         String lastName = firstLastNameSet.getString("last_name");
 
                         // Attempt to delete from employees table
-                        deleteEmployeesTableStatement.setInt(1, Integer.parseInt(args[2]));
-                        deleteEmployeesTableStatement.execute();
+                        delEmpStatement.setInt(1, Integer.parseInt(args[2]));
+                        delEmpStatement.execute();
 
                         // Attempt to delete from dept_emp table
-                        deleteDepartmentEmployeesTableStatement.setInt(1,
+                        delDepStatement.setInt(1,
                                 Integer.parseInt(args[2]));
-                        deleteDepartmentEmployeesTableStatement.execute();
+                        delDepStatement.execute();
 
                         // Attempt to delete from salaries table
-                        deleteSalariesTableStatement.setInt(1, Integer.parseInt(args[2]));
-                        deleteSalariesTableStatement.execute();
+                        delSalStatement.setInt(1, Integer.parseInt(args[2]));
+                        delSalStatement.execute();
 
                         // Print success message
                         System.out.println("Employee " + firstName + " " + lastName + " deleted!");
