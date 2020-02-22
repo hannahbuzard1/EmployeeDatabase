@@ -11,6 +11,7 @@ import java.util.Scanner;
 public final class main {
 
     private static Connection connection = null;
+    private static String departmentName;
     private static PreparedStatement showStatement = null;
     private static long sum = -1;
     private static int nextEmpNum = -1;
@@ -155,18 +156,18 @@ public final class main {
     private static void show(final String[] args) {
         if (args.length > 3) {
             // Declare and initialize departmentName based on input size
-            final String departmentName;
             if (args.length == 4) {
                 departmentName = args[3];
             } else {
                 departmentName = args[3] + " " + args[4];
             }
 
+            ResultSet showSet = null;
             try {
                 // Attempt to insert departmentName into statement
                 showStatement.setString(1, departmentName);
                 // Attempt to execute query and store it
-                final ResultSet showSet = showStatement.executeQuery();
+                showSet = showStatement.executeQuery();
 
                 // Attempt to iterate through every row of showSet and print all column values
                 while (showSet.next()) {
@@ -176,8 +177,15 @@ public final class main {
                     System.out.println(employeeNumber + " " + firstName + " " + lastName);
                 }
 
-                // Attempt to close showSet
-                showSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // Attempt to close showSet
+            try {
+                if (showSet != null) {
+                    showSet.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
