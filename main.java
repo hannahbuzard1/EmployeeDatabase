@@ -183,10 +183,8 @@ public final class main {
 
             // Attempt to close showSet
             try {
-                if (showSet != null) {
-                    showSet.close();
-                }
-            } catch (SQLException e) {
+                showSet.close();
+            } catch (SQLException | NullPointerException e) {
                 e.printStackTrace();
             }
         } else {
