@@ -1,1 +1,5 @@
-Jamal and Hannah's Pair Programming 330 assignment (will elaborate before we turn in)
+# Pair Programming
+## CSCI 330 @ WWU
+### Jamal Marri and Hannah Buzard
+
+All output is exactly as specified in assignment description.
