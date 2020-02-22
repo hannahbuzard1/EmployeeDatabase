@@ -12,6 +12,7 @@ public final class main {
 
     private static Connection connection = null;
     private static String departmentName;
+    private static ResultSet showSet = null;
     private static PreparedStatement showStatement = null;
     private static long sum = -1;
     private static int nextEmpNum = -1;
@@ -125,6 +126,8 @@ public final class main {
         }
 
         try {
+            // Attempt to close showSet
+            showSet.close();
             // Attempt to close showStatement
             showStatement.close();
             // Attempt to close departmentNumberStatement
@@ -162,7 +165,6 @@ public final class main {
                 departmentName = args[3] + " " + args[4];
             }
 
-            ResultSet showSet = null;
             try {
                 // Attempt to insert departmentName into statement
                 showStatement.setString(1, departmentName);
@@ -178,13 +180,6 @@ public final class main {
                 }
 
             } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            // Attempt to close showSet
-            try {
-                showSet.close();
-            } catch (SQLException | NullPointerException e) {
                 e.printStackTrace();
             }
         } else {
