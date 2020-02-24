@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public final class main {
+    
+    //initialize prepared statements
 
     private static Connection connection = null;
     private static String departmentName = null;
@@ -197,6 +199,7 @@ public final class main {
     }
 
     private static void sum(final String[] args) {
+        //print out the sum (sum is calculated in code above)
         if (args.length > 2) {
             System.out.println("$" + sum);
         } else {
